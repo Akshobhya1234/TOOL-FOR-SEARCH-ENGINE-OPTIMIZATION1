@@ -1,0 +1,28 @@
+import urllib
+from pyexcel_xls import read_data
+from collections import Counter
+import openpyxl
+import pyexcel_xls
+import xlsxwriter
+import bs4
+from bs4 import BeautifulSoup
+import urllib.request
+from pyexcel_xls import read_data
+from openpyxl import load_workbook
+workbook=xlsxwriter.Workbook('e:\\project3.xlsx')
+worksheet=workbook.add_worksheet('sheet1')
+worksheet.write('A1','http://www.hotstar.com')
+worksheet.write('A2','Kannada')
+worksheet.write('A3','Movies')
+worksheet.write('A4','Duration')
+worksheet1 = workbook.add_worksheet('sheet2')
+worksheet1.write('A1','http://www.amazon.com')
+worksheet1.write('A2','Clothing')
+worksheet1.write('A3','Mobiles')
+worksheet1.write('A4','Shoes')
+worksheet2=workbook.add_worksheet('sheet3')
+worksheet2.write('A1','http://www.flipkart.com')
+worksheet2.write('A2','Clothing')
+worksheet2.write('A3','Mobiles')
+worksheet2.write('A4','Shoes')
+workbook.close()

@@ -1,0 +1,126 @@
+import urllib
+from pyexcel_xls import read_data
+from collections import Counter
+import openpyxl
+import pyexcel_xls
+import xlsxwriter
+import bs4
+from bs4 import BeautifulSoup
+import urllib.request
+from pyexcel_xls import read_data
+from openpyxl import load_workbook
+a=int(input("Enter the worksheet:"))
+workbook = openpyxl.load_workbook('e:\\project3.xlsx')
+#print(workbook)
+from openpyxl import load_workbook
+
+wb = load_workbook('e:\\project3.xlsx')
+print(wb.sheetnames)
+
+for worksheets in wb.sheetnames:
+    worksheet = wb[worksheets]
+
+
+worksheets = wb.sheetnames[a-1]
+print(worksheets)
+worksheet = wb[worksheets]
+
+#print(worksheet)
+#if a==1:
+#    worksheet.activate()
+#elif a==2:
+#    worksheet1.activate()
+#elif a==3:
+#    worksheet2.activate()
+#sheet= wb.sheetnames[a-1]
+sheet = worksheet
+print('link = ',sheet['A1'].value)
+h=[]
+h.append(sheet['A1'].value)
+h.append(sheet['A2'].value)
+h.append(sheet['A3'].value)
+h.append(sheet['A4'].value)
+#print(h[0])
+#for h in range(0,1,1):
+
+req=urllib.request.Request(h[0],data=None,headers={'User-Agent':'Mozilla/5.0(Macintosh; Intel Mac Os X 10_9_3)Apple WebKit/537.36(KHTML,like Gecko)Chrome/35.0.1916.47 Safari/537.36'})
+f=urllib.request.urlopen(req)
+html=f.read().decode('utf-8')
+soup=BeautifulSoup(html,"html.parser")
+for script in soup(["script","style"]):
+    script.extract()
+text=soup.get_text()
+lines=(line.strip() for line in text.splitlines())
+fullstr=[]
+for line in lines:
+        if line.split() != []:
+            fullstr.append(line)
+#fullstr=tuple(p)
+#fullstr = fullstr.encode("utf-8", errors='ignore')
+
+print(fullstr)
+workbook=xlsxwriter.Workbook('e:\\project1.xlsx')
+worksheet=workbook.add_worksheet()
+a=[]
+for x in range(1,4,1):
+    #print(h[x])
+    #worksheet.write('A2',h[x])
+    #print(str(fullstr).count(h[x]))
+    a.append(str(fullstr).count(h[x]))
+    
+   #worksheet.write('A1','hello')
+g=len(fullstr)
+#workbook.close()
+#print(a)
+m=[]
+n=[]
+for x in a:
+    n.append(x/g)
+print(n)
+del h[0]
+for x in zip(h,a):
+    m.append(x)
+    
+bold = workbook.add_format({'bold': True})
+worksheet.write('A1', 'keyword', bold)
+worksheet.write('B1', 'word_density', bold)
+
+
+row = 1
+col = 0
+
+ # Iterate over the data and write it out row by row.
+for h,a in (m):
+     worksheet.write(row, col,h)
+     worksheet.write(row, col + 1,a/g)
+     #worksheet.write(row,col+2,a)
+     row += 1
+print(m)
+chart1 = workbook.add_chart({'type': 'line'})
+
+# Configure the first series.
+chart1.add_series({
+    'name':       '=Sheet1!$B$1',
+    'categories': '=Sheet1!$A$2:$A$7',
+    'values':     '=Sheet1!$B$2:$B$7',
+    })
+chart1.add_series({
+    'name':       ['Sheet1', 0, 1],
+    'categories': ['Sheet1', 1, 0, 6, 0],
+    'values':     ['Sheet1', 1, 2, 6, 2],
+})
+
+# Add a chart title and some axis labels.
+chart1.set_title ({'name': 'Results of sample analysis'})
+#chart1.set_x_axis({'name': 'Test number'})
+#chart1.set_y_axis({'name': 'Sample length (cm)'})
+
+# Set an Excel chart style. Colors with white outline and shadow.
+chart1.set_style(10)
+
+# Insert the chart into the worksheet (with an offset).
+worksheet.insert_chart('D2', chart1, {'x_offset': 25, 'y_offset': 10})
+
+workbook.close()
+#print(len(fullstr))
+#print(len(fullstr))
